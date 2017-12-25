@@ -17,5 +17,15 @@ router.post('/login', ctrlAuth.login);
 //Items
 router.get('/items',ctrlMenu);
 router.post('/items',ctrlMenu);
+router.get('/article',ctrlMenu);
+router.get('/article/:id',ctrlMenu);
+router.post('/article',ctrlMenu);
+
+//scrape
+
+router.get('/coingraph/:id',ctrlMenu);
+router.get('/market/:id',ctrlMenu);
+
+
 
 module.exports = router;

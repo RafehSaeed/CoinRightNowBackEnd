@@ -8,6 +8,7 @@ var auth = jwt({
 
 var ctrlAuth= require('../controllers/authentication');
 var ctrlMenu = require('../controllers/menu');
+var ctrlCoin = require('../controllers/coin');
 
 
 // authentication - add auth keyword after route to protect end point with only token access
@@ -26,6 +27,8 @@ router.post('/article',ctrlMenu);
 router.get('/coingraph/:id',ctrlMenu);
 router.get('/market/:id',ctrlMenu);
 
+//coinlist
 
+router.get('/coinlist',ctrlCoin);
 
 module.exports = router;

@@ -3,7 +3,10 @@ var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 var Item = require('./models/menu.js').Item;
 var Deal= require('./models/deal.js').Deal;
+var CoinList= require('./models/coin.js').CoinList;
 var passport = require('passport');
+var request = require("request");
+
 
 mongoose.connect('mongodb://localhost/test', {
   keepAlive: true,
@@ -38,4 +41,21 @@ var port = 5000;
 app.listen(port,function(err) {
 	console.log('Running server on port '+ port);
 });
+
+
+// BACKEND PROCESS NEEEDED
+
+var setCoinList  = function() {
+	// setTimeout(function() {
+	request('https://api.coinmarketcap.com/v1/ticker/?limit=0', function (error, response, body) {
+    console.log('error:', error); // Print the error if one occurred
+    var coinlist1= new CoinList({coinList: body});
+     coinlist1.save(function(err,coinlist) {
+ 		console.log('Coin List has been saved');
+    });
+});
+	// },60000);	
+};
+
+setCoinList();
 

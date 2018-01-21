@@ -37,7 +37,7 @@ router.get('/article',function(req,res) {
         //create json obect
         // time object
         var timestamp =  article[i].getCreateTime();
-        var formatedDate = timestamp.getDate() + '/' + (timestamp.getMonth()+1) + '/'+ timestamp.getFullYear();
+        var formatedDate = timestamp.getDate() + '-' + (timestamp.getMonth()+1) + '-'+ timestamp.getFullYear();
         articleArray.push({title:article[i].getTitle(),commentbody:article[i].getCommentBody(),
          id:article[i]._id, date: formatedDate}); 
 
@@ -54,7 +54,7 @@ router.get('/article/:id',function(req,res) {
 
         if (typeof article != 'undefined'){
             var timestamp =  article.getCreateTime();
-            var formatedDate = timestamp.getDate() + '/' + (timestamp.getMonth()+1) + '/'+ timestamp.getFullYear();   
+            var formatedDate = timestamp.getDate() + '-' + (timestamp.getMonth()+1) + '-'+ timestamp.getFullYear();   
             res.send({title:article.getTitle(),commentbody:article.getCommentBody(),
             id:article._id, date: formatedDate});
         }

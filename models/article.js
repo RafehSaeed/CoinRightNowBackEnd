@@ -1,7 +1,10 @@
 var mongoose = require("mongoose");
 
 var articleSchema = mongoose.Schema({
-      title: String,
+		title: {
+			type:String , unique: true , required:true
+  		},
+  	  createtime: {type: Date, default: Date.now},
       commentbody: String
     //  user: User
   });
@@ -16,6 +19,14 @@ articleSchema.methods.getTitle = function  () {
 articleSchema.methods.getCommentBody = function  () {
   
   return this.commentbody;
+
+};
+
+
+//returns the html of the article
+articleSchema.methods.getCreateTime = function  () {
+  
+  return this.createtime;
 
 };
 

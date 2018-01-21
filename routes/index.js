@@ -10,7 +10,7 @@ var ctrlAuth= require('../controllers/authentication');
 var ctrlMenu = require('../controllers/menu');
 
 
-// authentication
+// authentication - add auth keyword after route to protect end point with only token access
 router.post('/register', ctrlAuth.register);
 router.post('/login', ctrlAuth.login);
 

@@ -35,7 +35,11 @@ router.get('/article',function(req,res) {
 
       for(var i in article){
         //create json obect
-        articleArray.push({title:article[i].getTitle(),commentbody:article[i].getCommentBody(), id:article[i]._id}); 
+        // time object
+        var timestamp =  article[i].getCreateTime();
+        var formatedDate = timestamp.getDate() + '/' + (timestamp.getMonth()+1) + '/'+ timestamp.getFullYear();
+        articleArray.push({title:article[i].getTitle(),commentbody:article[i].getCommentBody(),
+         id:article[i]._id, date: formatedDate}); 
 
         }
       res.send(articleArray);
@@ -47,10 +51,16 @@ router.get('/article',function(req,res) {
 router.get('/article/:id',function(req,res) {
     
     Article.findById(req.params.id,function (err,article) {
-        console.log(article);
+
+        if (typeof article != 'undefined'){
+            var timestamp =  article.getCreateTime();
+            var formatedDate = timestamp.getDate() + '/' + (timestamp.getMonth()+1) + '/'+ timestamp.getFullYear();   
+            res.send({title:article.getTitle(),commentbody:article.getCommentBody(),
+            id:article._id, date: formatedDate});
+        }
       if (err) return console.error(err);
 
-      res.send(article);
+
     });
 });
 
@@ -59,6 +69,7 @@ router.get('/article/:id',function(req,res) {
 router.post('/article',function(req,res) {
     console.log(req.body);
         var article1= new Article({title: req.body.title, commentbody: req.body.commentbody});
+        console.log(article1.createtime);
     article1.save(function(err,article) {
         if (err) return console.error(err,article);
         console.log("article" + article1.getTitle() + " has been created" + article1.getCommentBody());

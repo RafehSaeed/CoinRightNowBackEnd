@@ -3,6 +3,7 @@ var Schema = mongoose.Schema;
 
 // Stores the list of all coins gotten from marketcap  API
 var coinSchema = new Schema({
+	_id: {type: String},
 	coinList:{
 		type: Object
 	}

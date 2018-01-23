@@ -30,5 +30,6 @@ router.get('/market/:id',ctrlMenu);
 //coinlist
 
 router.get('/coinlist',ctrlCoin);
+router.get('/coinlistall',ctrlCoin);
 
 module.exports = router;

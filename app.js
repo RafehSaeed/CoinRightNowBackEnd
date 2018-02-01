@@ -7,7 +7,6 @@ var CoinList= require('./models/coin.js').CoinList;
 var passport = require('passport');
 var request = require("request");
 
-
 mongoose.connect('mongodb://localhost/test', {
   keepAlive: true,
   reconnectTries: Number.MAX_VALUE,
@@ -34,14 +33,11 @@ app.use(function(req, res, next) {
 app.use(bodyParser.json({type: 'application/json'}));
 app.use('/', routesApi);
 
-
 var port = 5000; 
-
 
 app.listen(port,function(err) {
 	console.log('Running server on port '+ port);
 });
-
 
 // BACKEND PROCESS NEEEDED
 var setCoinList  = function() {
@@ -56,6 +52,7 @@ var setCoinList  = function() {
 		else{
 			CoinList.update({ _id: '1' }, { $set: { coinList: body }}).exec();
 			console.log('Coin List has been updated');
+			console.log(coinlist1.getBestPerformingCoin());
 		}
 	});
 });

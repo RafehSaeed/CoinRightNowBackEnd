@@ -12,22 +12,16 @@ var articleSchema = mongoose.Schema({
 //returns the title of the Article
 articleSchema.methods.getTitle = function  () {
     return this.title;
-
 };
 
 //returns the html of the article
 articleSchema.methods.getCommentBody = function  () {
-  
   return this.commentbody;
-
 };
 
-
 //returns the html of the article
-articleSchema.methods.getCreateTime = function  () {
-  
+articleSchema.methods.getCreateTime = function  () {  
   return this.createtime;
-
 };
 
 //exporting so can be used by app.js

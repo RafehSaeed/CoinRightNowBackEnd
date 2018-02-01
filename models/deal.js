@@ -8,9 +8,7 @@ var dealSchema = mongoose.Schema({
 
 dealSchema.methods.getName = function  () {
     return this.name;
-
 };
-
 
 var Deal = mongoose.model('Deal',dealSchema);
 

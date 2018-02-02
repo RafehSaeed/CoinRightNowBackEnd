@@ -49,10 +49,10 @@ var setCoinList  = function() {
 			console.log('Coin List has been saved');
 			});
 		}
-		else{
+		else if(count==1 && body != null){
 			CoinList.update({ _id: '1' }, { $set: { coinList: body }}).exec();
 			console.log('Coin List has been updated');
-			console.log(coinlist1.getBestPerformingCoin());
+		
 		}
 	});
 });

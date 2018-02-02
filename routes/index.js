@@ -31,5 +31,6 @@ router.get('/market/:id',ctrlMenu);
 
 router.get('/coinlist',ctrlCoin);
 router.get('/coinlistall',ctrlCoin);
+router.get('/gettopperformers',ctrlCoin);
 
 module.exports = router;

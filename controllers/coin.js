@@ -25,7 +25,9 @@ router.get('/coinlistall',function(req,res) {
 router.get('/gettopperformers',function(req,res) {
 
 		Coin.findById('1', function (err, coin) {
-		res.send(coin.getBestPerformingCoin());
+		var topworstperformers = [];
+		topworstperformers.push({topcoin: coin.getBestPerformingCoin(),worstcoin: coin.getWorstPerformingCoin()});
+		res.send(topworstperformers);
 	});
 
 	

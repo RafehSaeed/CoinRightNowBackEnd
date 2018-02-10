@@ -33,4 +33,8 @@ router.get('/coinlist',ctrlCoin);
 router.get('/coinlistall',ctrlCoin);
 router.get('/gettopperformers',ctrlCoin);
 
+//language
+
+router.get('/languages',ctrlMenu);
+
 module.exports = router;

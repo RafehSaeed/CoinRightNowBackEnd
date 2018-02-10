@@ -5,8 +5,9 @@ var cheerio = require('cheerio');
 var router = express.Router();
 var mongoose = require('mongoose');
 var Item = require('../models/menu.js').Item;
+var Language = require('../models/languages.js').Language;
 var Article= require('../models/article.js').Article;
-
+var R = require('ramda');
 
 //Returns all the Menu Itemw as JSON
 router.get('/items',function(req,res) {
@@ -24,6 +25,23 @@ router.get('/items',function(req,res) {
 	  res.send(itemArray);
 	});
 });
+
+
+//Returns all languages as Json
+router.get('/languages',function(req,res) {
+    
+    Language.find(function (err,languages) {
+      if (err) return console.error(err);
+      var languageArray = [];
+
+      for(var i in languages){
+        //create json obect
+        languageArray.push(R.toUpper(languages[i].getSymbol())); 
+        }
+      res.send(R.flatten(languageArray));
+    });
+});
+
 
 
 //Returns all the article as JSON

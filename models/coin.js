@@ -8,11 +8,11 @@ var coinSchema = new Schema({
 		type: Object
 	}
 });
-//returns all of the coinList
+//Returns all of the coinList
 coinSchema.methods.getCoinList = function  () {
 	return this.coinList;
 };
-//returns coin with the best 24 hour change
+//Returns coin with the best 24 hour change
 coinSchema.methods.getBestPerformingCoin = function  () {
 
 	var parseAsInt = function(n){
@@ -28,7 +28,7 @@ coinSchema.methods.getBestPerformingCoin = function  () {
 	
 	return JSON.stringify(topcoin[topcoin.length-1]);
 };
-
+// Returns coin with the worst 24 hour change.
 coinSchema.methods.getWorstPerformingCoin = function  () {
 
 	var parseAsInt = function(n){

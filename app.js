@@ -4,6 +4,7 @@ var mongoose = require('mongoose');
 var Item = require('./models/menu.js').Item;
 var Deal= require('./models/deal.js').Deal;
 var CoinList= require('./models/coin.js').CoinList;
+var Language = require('./models/languages.js').Language;
 var passport = require('passport');
 var request = require("request");
 
@@ -58,7 +59,18 @@ var setCoinList  = function() {
 });
 };
 
+var setLanguages= function (languages){	
+	languages.map(function(n){
+	var language = new Language({symbol: n});
+	language.save(function(err,language) {
+			console.log('language has been saved'+ language);
+			});
+	});
+};
+
 setCoinList();
+//create languages english urdu and french for the app
+setLanguages(['en','ur','fr']);
 setInterval(setCoinList,240000);
 
 

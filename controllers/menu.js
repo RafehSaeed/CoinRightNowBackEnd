@@ -5,6 +5,7 @@ var cheerio = require('cheerio');
 var router = express.Router();
 var mongoose = require('mongoose');
 var Item = require('../models/menu.js').Item;
+var Graph = require('../models/graph.js').Graph;
 var Language = require('../models/languages.js').Language;
 var Article= require('../models/article.js').Article;
 var R = require('ramda');
@@ -26,7 +27,6 @@ router.get('/items',function(req,res) {
 	});
 });
 
-
 //Returns all languages as Json
 router.get('/languages',function(req,res) {
     
@@ -41,8 +41,6 @@ router.get('/languages',function(req,res) {
       res.send(R.flatten(languageArray));
     });
 });
-
-
 
 //Returns all the article as JSON
 router.get('/article',function(req,res) {
@@ -64,7 +62,6 @@ router.get('/article',function(req,res) {
     });
 });
 
-
 //Returns a particulat article depending on the provided id
 router.get('/article/:id',function(req,res) {
     
@@ -82,7 +79,6 @@ router.get('/article/:id',function(req,res) {
     });
 });
 
-
 //This is used to create articles given the tile and comment body of the article
 router.post('/article',function(req,res) {
     console.log(req.body);
@@ -93,62 +89,71 @@ router.post('/article',function(req,res) {
         console.log("article" + article1.getTitle() + " has been created" + article1.getCommentBody());
     });
     res.send(article1);
-
 });
-
-
 
 //Returns yearly graph data as JSON
 router.get('/coingraph/:id',function(req,res) {
-	
 
 
-    url = 'https://coinmarketcap.com/currencies/' +req.params.id + '/historical-data/?start=20170101&end=20371120';
-    request(url, function(error, response, html){
+    Graph.findOne({'symbol': req.params.id} , function (err, graph_result) {
+        if (graph_result == null)
+            {
+                    url = 'https://coinmarketcap.com/currencies/' +req.params.id + '/historical-data/?start=20170101&end=20371120';
+                    request(url, function(error, response, html){
 
-        if(!error){
-            var $ = cheerio.load(html);
-            var graph = [];//stores the graph
-            var count = 0;
-            var graphset = {};
+                        if(!error){
+                            var $ = cheerio.load(html);
+                            var graph = [];//stores the graph
+                            var count = 0;
+                            var graphset = {};
 
-        	$('td').each(function(i, elem) {
-        	count = count % 7;
-        	//every time count reaches 0 create new object
-        	if(count==0){
+                            $('td').each(function(i, elem) {
+                            count = count % 7;
+                            //every time count reaches 0 create new object
+                            if(count==0){
 
-	        	graphset = {date:"" ,price: "" , volume: ""};
-				graphset.date= $(this).text();
-        	}
+                                graphset = {date:"" ,price: "" , volume: ""};
+                                graphset.date= $(this).text();
+                            }
 
-        	if(count==4){
-        	 graphset.price= $(this).text();
-        	}
+                            if(count==4){
+                             graphset.price= $(this).text();
+                            }
 
-        	if (count==5){
-        	 graphset.volume= parseInt($(this).text().split(',').join(''));
-        	}
+                            if (count==5){
+                             graphset.volume= parseInt($(this).text().split(',').join(''));
+                            }
 
-        	if (count==6){
-   
-        	 graphset.marketcap= parseInt($(this).text().split(',').join(''));
-        	 graph.push(graphset);
-        	}
+                            if (count==6){
+                   
+                             graphset.marketcap= parseInt($(this).text().split(',').join(''));
+                             graph.push(graphset);
+                            }
 
-        	count++;
-			});
+                            count++;
+                            });
+                        // Save the graph from here to the database 
+                        var graphObject= new Graph({symbol: req.params.id , graph : graph});
+                        graphObject.save(function(err,result) {
+                            console.log('graph has been saved'+ result);
+                        });
+                        res.send(graph);           
+                        }
 
-    	res.send(graph);           
-        }
+                    });
+            }
+        else { 
+         
+                res.send(graph_result.getGraph());           
 
+             }    
     });
+
 });
 
 //Returns markets for the coin
 router.get('/market/:id',function(req,res) {
     
-
-
     url = 'https://coinmarketcap.com/currencies/' +req.params.id + '/#markets';
     request(url, function(error, response, html){
 
@@ -204,9 +209,7 @@ router.get('/market/:id',function(req,res) {
     });
 });
 
-
 //Creates new items provided by the User
-
 router.post('/items',function(req,res) {
 	var item1= new Item({name: req.body.name,description: req.body.description,price: req.body.price});
 	item1.save(function(err,item) {

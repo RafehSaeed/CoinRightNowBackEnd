@@ -21,7 +21,7 @@ router.get('/coinlistall',function(req,res) {
 	  res.send(coins);
 	});
 });
-//return the top performing coin in the last 24 hours
+//Returns the top performing coin in the last 24 hours
 router.get('/gettopperformers',function(req,res) {
 
 		Coin.findById('1', function (err, coin) {

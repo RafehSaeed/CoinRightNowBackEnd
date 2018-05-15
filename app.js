@@ -53,7 +53,6 @@ var setCoinList  = function() {
 		else if(count==1 && body != null){
 			CoinList.update({ _id: '1' }, { $set: { coinList: body }}).exec();
 			console.log('Coin List has been updated');
-		
 		}
 	});
 });

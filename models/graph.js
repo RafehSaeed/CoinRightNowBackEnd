@@ -15,8 +15,8 @@ graphSchema.methods.getGraph = function  () {
 	return this.graph;
 };
 
-graphSchema.methods.getCreationTime = function  () {
-	return this.createdAt;
+graphSchema.methods.getUpdatedTime = function  () {
+	return this.updatedAt;
 };
 
 

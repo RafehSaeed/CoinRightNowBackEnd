@@ -17,19 +17,16 @@ router.get('/coinlist',function(req,res) {
 router.get('/coinlistall',function(req,res) {
 	Coin.find(function (err,coins) {
 	  if (err) return console.error(err);
-
 	  res.send(coins);
 	});
 });
 //Returns the top performing coin in the last 24 hours
 router.get('/gettopperformers',function(req,res) {
 
-		Coin.findById('1', function (err, coin) {
+	Coin.findById('1', function (err, coin) {
 		var topworstperformers = [];
 		topworstperformers.push({topcoin: coin.getBestPerformingCoin(),worstcoin: coin.getWorstPerformingCoin()});
 		res.send(topworstperformers);
 	});
-
-	
 });
 module.exports= router;

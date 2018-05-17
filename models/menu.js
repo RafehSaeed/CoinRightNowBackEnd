@@ -9,7 +9,6 @@ var menuSchema = mongoose.Schema({
 //returns name of the item
 menuSchema.methods.getName = function  () {
     return this.name;
-
 };
 
 //used for displaying items price as stars in terms of their price on the front end

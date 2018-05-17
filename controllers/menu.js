@@ -94,59 +94,67 @@ router.post('/article',function(req,res) {
 //Returns yearly graph data as JSON
 router.get('/coingraph/:id',function(req,res) {
 
-
     Graph.findOne({'symbol': req.params.id} , function (err, graph_result) {
-        if (graph_result == null)
+        // Check if it is been 24 hours since last updated 
+        var expirytime = new Date(graph_result.getUpdatedTime());
+        expirytime.setDate(expirytime.getDate() + 1);
+
+        if (graph_result == null || (Date.now() > expirytime) )
             {
-                    url = 'https://coinmarketcap.com/currencies/' +req.params.id + '/historical-data/?start=20170101&end=20371120';
-                    request(url, function(error, response, html){
+                url = 'https://coinmarketcap.com/currencies/' +req.params.id + '/historical-data/?start=20170101&end=20371120';
+                request(url, function(error, response, html){
 
-                        if(!error){
-                            var $ = cheerio.load(html);
-                            var graph = [];//stores the graph
-                            var count = 0;
-                            var graphset = {};
+                    if(!error){
+                        var $ = cheerio.load(html);
+                        var graph = [];//stores the graph
+                        var count = 0;
+                        var graphset = {};
 
-                            $('td').each(function(i, elem) {
-                            count = count % 7;
-                            //every time count reaches 0 create new object
-                            if(count==0){
+                        $('td').each(function(i, elem) {
+                        count = count % 7;
+                        //every time count reaches 0 create new object
+                        if(count==0){
 
-                                graphset = {date:"" ,price: "" , volume: ""};
-                                graphset.date= $(this).text();
-                            }
+                            graphset = {date:"" ,price: "" , volume: ""};
+                            graphset.date= $(this).text();
+                        }
 
-                            if(count==4){
-                             graphset.price= $(this).text();
-                            }
+                        if(count==4){
+                         graphset.price= $(this).text();
+                        }
 
-                            if (count==5){
-                             graphset.volume= parseInt($(this).text().split(',').join(''));
-                            }
+                        if (count==5){
+                         graphset.volume= parseInt($(this).text().split(',').join(''));
+                        }
 
-                            if (count==6){
-                   
-                             graphset.marketcap= parseInt($(this).text().split(',').join(''));
-                             graph.push(graphset);
-                            }
+                        if (count==6){
+               
+                         graphset.marketcap= parseInt($(this).text().split(',').join(''));
+                         graph.push(graphset);
+                        }
 
-                            count++;
-                            });
-                        // Save the graph from here to the database 
+                        count++;
+                        });
+                        // Save the graph from here to the database / update if it cannot be saved 
                         var graphObject= new Graph({symbol: req.params.id , graph : graph});
                         graphObject.save(function(err,result) {
                             console.log('graph has been saved'+ result);
+                            if(typeof result == 'undefined'){
+                                Graph.findOne({symbol: req.params.id } ,function(err,coin){
+                                    coin.graph =  graph; 
+                                    coin.save(); 
+                                })
+                            }
                         });
                         res.send(graph);           
-                        }
+                    }
 
-                    });
+                });
             }
-        else { 
-         
-                res.send(graph_result.getGraph());           
+        else{ 
 
-             }    
+            res.send(graph_result.getGraph());          
+            }    
     });
 
 });

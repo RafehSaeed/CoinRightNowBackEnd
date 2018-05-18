@@ -6,6 +6,7 @@ var router = express.Router();
 var mongoose = require('mongoose');
 var Item = require('../models/menu.js').Item;
 var Graph = require('../models/graph.js').Graph;
+var Market = require('../models/market.js').Market;
 var Language = require('../models/languages.js').Language;
 var Article= require('../models/article.js').Article;
 var R = require('ramda');
@@ -96,8 +97,10 @@ router.get('/coingraph/:id',function(req,res) {
 
     Graph.findOne({'symbol': req.params.id} , function (err, graph_result) {
         // Check if it is been 24 hours since last updated 
-        var expirytime = new Date(graph_result.getUpdatedTime());
-        expirytime.setDate(expirytime.getDate() + 1);
+        if (graph_result != null){
+            var expirytime = new Date(graph_result.getUpdatedTime());
+            expirytime.setDate(expirytime.getDate() + 1);
+        }
 
         if (graph_result == null || (Date.now() > expirytime) )
             {
@@ -135,7 +138,7 @@ router.get('/coingraph/:id',function(req,res) {
 
                         count++;
                         });
-                        // Save the graph from here to the database / update if it cannot be saved 
+                        // Upsert Graph
                         var graphObject= new Graph({symbol: req.params.id , graph : graph});
                         graphObject.save(function(err,result) {
                             console.log('graph has been saved'+ result);
@@ -148,74 +151,89 @@ router.get('/coingraph/:id',function(req,res) {
                         });
                         res.send(graph);           
                     }
-
                 });
             }
         else{ 
-
             res.send(graph_result.getGraph());          
             }    
     });
-
 });
 
 //Returns markets for the coin
 router.get('/market/:id',function(req,res) {
-    
-    url = 'https://coinmarketcap.com/currencies/' +req.params.id + '/#markets';
-    request(url, function(error, response, html){
 
-        if(!error){
-            var $ = cheerio.load(html);
-            var graph = [];//stores the graph
-            var count = 0;
-            var graphset = {};
-
-            $('td').each(function(i, elem) {
-            count = count % 7;
-            //every time count reaches 0 create new object
-            if(count==0){
-
-                graphset = {market:"" ,pair: "" , volume: "" , price:"", volumepercent:""};
-
-            }
-
-            if(count==1){
-
-    
-                graphset.market= $(this).text();
-            }
-
-            if(count==2){
-             graphset.pair= $(this).text();
-            }
-
-            if(count==3){
-             graphset.volume= $(this).text();
-            }
-
-            if(count==4){
-             graphset.price= $(this).text();
-            }
-
-            if (count==5){
-             graphset.volumepercent= $(this).text();
-            }
-
-            if (count==6){
-   
-           
-             graph.push(graphset);
-            }
-
-            count++;
-            });
-
-        res.send(graph);           
+    Market.findOne({'symbol': req.params.id} , function (err, market_result) {
+        // Check if it is been 24 hours since last updated 
+        if (market_result != null){
+            var expirytime = new Date(market_result.getUpdatedTime());
+            expirytime.setDate(expirytime.getDate() + 1);
         }
 
+        if (market_result == null || (Date.now() > expirytime) ){
+            url = 'https://coinmarketcap.com/currencies/' +req.params.id + '/#markets';
+            request(url, function(error, response, html){
+
+                if(!error){
+                    var $ = cheerio.load(html);
+                    var graph = [];//stores the graph
+                    var count = 0;
+                    var graphset = {};
+
+                    $('td').each(function(i, elem) {
+                    count = count % 7;
+                    //every time count reaches 0 create new object
+                    if(count==0){
+                        graphset = {market:"" ,pair: "" , volume: "" , price:"", volumepercent:""};
+                    }
+
+                    if(count==1){
+                        graphset.market= $(this).text();
+                    }
+
+                    if(count==2){
+                        graphset.pair= $(this).text();
+                    }
+
+                    if(count==3){
+                        graphset.volume= $(this).text();
+                    }
+
+                    if(count==4){
+                        graphset.price= $(this).text();
+                    }
+
+                    if (count==5){
+                        graphset.volumepercent= $(this).text();
+                    }
+
+                    if (count==6){
+                        graph.push(graphset);
+                    }
+
+                    count++;
+                    });
+                        var graphObject= new Market({symbol: req.params.id , graph : graph});
+                        graphObject.save(function(err,result) {
+                            console.log('marketlist has been saved'+ result);
+                            if(typeof result == 'undefined'){
+                                Market.findOne({symbol: req.params.id } ,function(err,market){
+                                    market.graph =  graph; 
+                                    market.save(); 
+                                })
+                            }
+                        });
+
+                res.send(graph);           
+                }
+
+            });
+        }
+        else
+        { 
+            res.send(market_result.getGraph());          
+        }   
     });
-});
+ });
 
 //Creates new items provided by the User
 router.post('/items',function(req,res) {

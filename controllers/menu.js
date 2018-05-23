@@ -89,7 +89,14 @@ router.post('/article',function(req,res) {
         if (err) return console.error(err,article);
         console.log("article" + article1.getTitle() + " has been created" + article1.getCommentBody());
     });
-    res.send(article1);
+
+    if(article1.title == ''){
+        res.status(204);
+        res.send(article1);
+    }
+    else{
+        res.send(article1);
+    }
 });
 
 //Returns yearly graph data as JSON
@@ -141,7 +148,7 @@ router.get('/coingraph/:id',function(req,res) {
                         // Upsert Graph
                         var graphObject= new Graph({symbol: req.params.id , graph : graph});
                         graphObject.save(function(err,result) {
-                            console.log('graph has been saved'+ result);
+                            console.log('graph has been saved');
                             if(typeof result == 'undefined'){
                                 Graph.findOne({symbol: req.params.id } ,function(err,coin){
                                     coin.graph =  graph; 
@@ -214,7 +221,7 @@ router.get('/market/:id',function(req,res) {
                     });
                         var graphObject= new Market({symbol: req.params.id , graph : graph});
                         graphObject.save(function(err,result) {
-                            console.log('marketlist has been saved'+ result);
+                            console.log('marketlist has been saved');
                             if(typeof result == 'undefined'){
                                 Market.findOne({symbol: req.params.id } ,function(err,market){
                                     market.graph =  graph; 
@@ -230,7 +237,7 @@ router.get('/market/:id',function(req,res) {
         }
         else
         { 
-            res.send(market_result.getGraph());          
+            res.send(market_result.getMarket());          
         }   
     });
  });

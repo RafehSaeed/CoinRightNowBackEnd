@@ -232,7 +232,6 @@ router.get('/market/:id',function(req,res) {
 
                 res.send(graph);           
                 }
-
             });
         }
         else

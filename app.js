@@ -8,7 +8,7 @@ var Language = require('./models/languages.js').Language;
 var passport = require('passport');
 var request = require("request");
 
-mongoose.connect('mongodb://localhost/test', {
+mongoose.connect('mongodb://167.99.198.24/test', {
   keepAlive: true,
   reconnectTries: Number.MAX_VALUE,
   useMongoClient: true

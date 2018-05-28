@@ -43,6 +43,7 @@ app.listen(port,function(err) {
 // BACKEND PROCESS NEEEDED
 var setCoinList  = function() {
 	request('https://api.coinmarketcap.com/v1/ticker/?limit=0', function (error, response, body) {	
+	JSON.stringify(body);
 	var coinlist1= new CoinList({ _id:'1' ,coinList: body});
 	CoinList.count({}, function(err, count){
 		if(count==0){
@@ -51,6 +52,7 @@ var setCoinList  = function() {
 			});
 		}
 		else if(count==1 && body != null){
+			JSON.stringify(body);
 			CoinList.update({ _id: '1' }, { $set: { coinList: body }}).exec();
 			console.log('Coin List has been updated');
 		}

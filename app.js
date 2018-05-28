@@ -42,7 +42,8 @@ app.listen(port,function(err) {
 
 // BACKEND PROCESS NEEEDED
 var setCoinList  = function() {
-	request('https://api.coinmarketcap.com/v1/ticker/?limit=0', function (error, response, body) {	
+	request('https://api.coinmarketcap.com/v1/ticker/?limit=0', function (error, response, body) {
+		// ss
 	JSON.stringify(body);
 	var coinlist1= new CoinList({ _id:'1' ,coinList: body});
 	CoinList.count({}, function(err, count){

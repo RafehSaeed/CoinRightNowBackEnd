@@ -7,6 +7,17 @@ var CoinList= require('./models/coin.js').CoinList;
 var Language = require('./models/languages.js').Language;
 var passport = require('passport');
 var request = require("request");
+var redis = require('redis');
+// Reddis Helper
+var helper = require('./helpers/helper.js');
+
+
+global.client = redis.createClient();
+client.on('error', function(err){
+  console.log('Something went wrong ', err)
+});
+
+
 
 mongoose.connect('mongodb://localhost/admin', {
   keepAlive: true,
@@ -19,6 +30,10 @@ db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() {
   console.log('Database connection activated...');
 });
+
+
+// Simply pass the port that you want a Redis server to listen on.
+
 
 require('./config/passport');
 
@@ -53,9 +68,10 @@ var setCoinList  = function() {
 			});
 		}
 		else if(count==1 && body != null){
-			JSON.stringify(body);
+			helper.addCoinListToReddis(JSON.stringify(body));
 			CoinList.update({ _id: '1' }, { $set: { coinList: body }}).exec();
 			console.log('Coin List has been updated');
+
 		}
 	});
 });

@@ -5,12 +5,25 @@ var cheerio = require('cheerio');
 var router = express.Router();
 var mongoose = require('mongoose');
 var Coin = require('../models/coin.js').CoinList;
+var helper = require('../helpers/helper.js');
+
 
 //Returns the coins list in JSON format
 router.get('/coinlist',function(req,res) {
-	Coin.findById('1', function (err, coin) {
-		res.send(coin.getCoinList());
+
+	client.get('coinlist', function(err, result) {
+		if(result){
+			console.log('send via redis')
+			res.send(JSON.parse(result));
+		}else{
+			Coin.findById('1', function (err, coin) {
+			res.send(coin.getCoinList());
+			});
+		}
+
 	});
+
+
 });
 
 //get all version of differnt coins

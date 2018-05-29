@@ -23,6 +23,7 @@
     "passport-local": "^1.0.0",
     "ramda": "^0.25.0",
     "redis": "^2.8.0",
+    "redis-server": "^1.2.0",
     "request": "^2.87.0"
   }
 }

@@ -27,8 +27,8 @@ router.get('/coinlist',function(req,res) {
 //Returns the currency list in JSON format
 router.get('/currencylist',function(req,res) {
 	
-		CurrencyList.findById('1', function (err, coin) {
-			res.send(CurrencyList.getCurrencyList());
+		CurrencyList.findById('1', function (err, currency) {
+			res.send(currency.getCurrencyList());
 		});
 		
 });

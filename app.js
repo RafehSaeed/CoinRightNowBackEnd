@@ -4,20 +4,18 @@ var mongoose = require('mongoose');
 var Item = require('./models/menu.js').Item;
 var Deal= require('./models/deal.js').Deal;
 var CoinList= require('./models/coin.js').CoinList;
+var CurrencyList= require('./models/currencies.js').CurrencyList;
 var Language = require('./models/languages.js').Language;
 var passport = require('passport');
 var request = require("request");
 var redis = require('redis');
-// Reddis Helper
 var helper = require('./helpers/helper.js');
 
-
+// Create Redis Client that can be used globally 
 global.client = redis.createClient();
 client.on('error', function(err){
   console.log('Something went wrong ', err)
 });
-
-
 
 mongoose.connect('mongodb://localhost/admin', {
   keepAlive: true,
@@ -30,10 +28,6 @@ db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() {
   console.log('Database connection activated...');
 });
-
-
-// Simply pass the port that you want a Redis server to listen on.
-
 
 require('./config/passport');
 
@@ -58,9 +52,7 @@ app.listen(port,function(err) {
 // BACKEND PROCESS NEEEDED
 var setCoinList  = function() {
 	request('https://api.coinmarketcap.com/v1/ticker/?limit=0', function (error, response, body) {
-		// ss
-	JSON.stringify(body);
-	var coinlist1= new CoinList({ _id:'1' ,coinList: body});
+	var currencyList= new CoinList({ _id:'1' ,coinList: body});
 	CoinList.count({}, function(err, count){
 		if(count==0){
 			coinlist1.save(function(err,coinlist) {
@@ -77,6 +69,26 @@ var setCoinList  = function() {
 });
 };
 
+// Set Currency List 
+var setCurrencyList  = function() {
+	request('http://data.fixer.io/api/latest?access_key=7570ce4d97b1166c5fb5e423d9e3dd1c&format=1', function (error, response, body) {
+	var currencyList= new CurrencyList({ _id:'1' ,currencyList: body});
+	CurrencyList.count({}, function(err, count){
+		if(count==0){
+			currencyList.save(function(err,currencyList) {
+			console.log('Currency List has been saved' );
+			});
+		}
+		else if(count==1 && body != null){
+			CurrencyList.update({ _id: '1' }, { $set: { currenctList: body }}).exec();
+			console.log('Currency List has been updated' );
+
+		}
+
+	});
+});
+};
+
 var setLanguages= function (languages){	
 	languages.map(function(n){
 	var language = new Language({symbol: n});
@@ -87,8 +99,10 @@ var setLanguages= function (languages){
 };
 
 setCoinList();
+setCurrencyList();
 //create languages english urdu and french for the app
 setLanguages(['en','ur','fr']);
 setInterval(setCoinList,240000);
+setInterval(setCurrencyList,18000000);
 
 

@@ -5,25 +5,32 @@ var cheerio = require('cheerio');
 var router = express.Router();
 var mongoose = require('mongoose');
 var Coin = require('../models/coin.js').CoinList;
+var CurrencyList= require('../models/currencies.js').CurrencyList;
 var helper = require('../helpers/helper.js');
 
 
 //Returns the coins list in JSON format
 router.get('/coinlist',function(req,res) {
-
 	client.get('coinlist', function(err, result) {
 		if(result){
-			console.log('send via redis')
+			console.log('CoinList sent via Redis')
 			res.send(JSON.parse(result));
 		}else{
 			Coin.findById('1', function (err, coin) {
 			res.send(coin.getCoinList());
 			});
 		}
-
 	});
+});
 
 
+//Returns the currency list in JSON format
+router.get('/currencylist',function(req,res) {
+	
+		Coin.findById('1', function (err, coin) {
+			res.send(CurrencyList.getCurrencyList());
+		});
+		
 });
 
 //get all version of differnt coins

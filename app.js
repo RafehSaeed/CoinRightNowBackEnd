@@ -43,7 +43,7 @@ app.use(function(req, res, next) {
 app.use(bodyParser.json({type: 'application/json'}));
 app.use('/', routesApi);
 
-var port = 5000; 
+var port = 80; 
 
 app.listen(port,function(err) {
 	console.log('Running server on port '+ port);

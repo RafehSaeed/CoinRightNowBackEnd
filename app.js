@@ -69,9 +69,12 @@ var setCoinList  = function() {
 });
 };
 
+
 // Set Currency List 
 var setCurrencyList  = function() {
-	request('http://data.fixer.io/api/latest?access_key=7570ce4d97b1166c5fb5e423d9e3dd1c&format=1', function (error, response, body) {
+	// Currencies to show
+	var currencyparams = 'CAD,AUD,BGN,BRL,CHF,CNY,CZK,DKK,GBP,HRK,HKD,HUF,IDR,ILS,INR,JPY,KRW,MXN,MYR,NOK,NZD,PHP,PLN,RON,RUB,SEK,SGD,THB,TRY,ZAR,EUR'
+	request('http://data.fixer.io/api/latest?access_key=7570ce4d97b1166c5fb5e423d9e3dd1c&format=1'+currencyparams, function (error, response, body) {
 	var currencyList= new CurrencyList({ _id:'1' ,currencyList: body});
 	CurrencyList.count({}, function(err, count){
 		if(count==0){

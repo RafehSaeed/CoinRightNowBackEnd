@@ -57,7 +57,6 @@ router.get('/article',function(req,res) {
         var formatedDate = timestamp.getDate() + '-' + (timestamp.getMonth()+1) + '-'+ timestamp.getFullYear();
         articleArray.push({title:article[i].getTitle(),commentbody:article[i].getCommentBody(),
          id:article[i]._id, date: formatedDate}); 
-
         }
       res.send(articleArray);
     });

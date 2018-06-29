@@ -69,11 +69,11 @@ var setCoinList  = function() {
 });
 };
 
-
 // Set Currency List 
 var setCurrencyList  = function() {
 	// Currencies to show
 	var currencyparams = 'CAD,AUD,BGN,BRL,CHF,CNY,CZK,DKK,GBP,HRK,HKD,HUF,IDR,ILS,INR,JPY,KRW,MXN,MYR,NOK,NZD,PHP,PLN,RON,RUB,SEK,SGD,THB,TRY,ZAR,EUR'
+
 	request('http://data.fixer.io/api/latest?access_key=7570ce4d97b1166c5fb5e423d9e3dd1c&format=1&symbols='+currencyparams, function (error, response, body) {
 	var currencyList= new CurrencyList({ _id:'1' ,currencyList: body});
 	CurrencyList.count({}, function(err, count){
@@ -85,7 +85,6 @@ var setCurrencyList  = function() {
 		else if(count==1 && body != null){
 			CurrencyList.update({ _id: '1' }, { $set: { currenctList: body }}).exec();
 			console.log('Currency List has been updated' );
-
 		}
 
 	});
@@ -96,15 +95,18 @@ var setLanguages= function (languages){
 	languages.map(function(n){
 	var language = new Language({symbol: n});
 	language.save(function(err,language) {
-			console.log('language has been saved'+ language);
-			});
+		console.log('language has been saved'+ language);
+		});
 	});
 };
 
+// Initialize currency list and coin list
 setCoinList();
 setCurrencyList();
+
 //create languages english urdu and french for the app
 setLanguages(['en','ur','fr']);
+
 setInterval(setCoinList,240000);
 setInterval(setCurrencyList,18000000);
 

@@ -33,7 +33,13 @@ router.get('/coinlist',ctrlCoin);
 router.get('/coinlistall',ctrlCoin);
 router.get('/gettopperformers',ctrlCoin);
 
-//coinlist
+//globaldata
+
+
+router.get('/globaldata',ctrlCoin);
+
+
+//currencylist
 
 router.get('/currencylist',ctrlCoin);
 

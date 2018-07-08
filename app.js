@@ -5,6 +5,7 @@ var Item = require('./models/menu.js').Item;
 var Deal= require('./models/deal.js').Deal;
 var CoinList= require('./models/coin.js').CoinList;
 var CurrencyList= require('./models/currencies.js').CurrencyList;
+var GlobalData= require('./models/global.js').GlobalData;
 var Language = require('./models/languages.js').Language;
 var passport = require('passport');
 var request = require("request");
@@ -43,7 +44,7 @@ app.use(function(req, res, next) {
 app.use(bodyParser.json({type: 'application/json'}));
 app.use('/', routesApi);
 
-var port = 80; 
+var port = 5000; 
 
 app.listen(port,function(err) {
 	console.log('Running server on port '+ port);
@@ -52,7 +53,7 @@ app.listen(port,function(err) {
 // BACKEND PROCESS NEEEDED
 var setCoinList  = function() {
 	request('https://api.coinmarketcap.com/v1/ticker/?limit=0', function (error, response, body) {
-	var currencyList= new CoinList({ _id:'1' ,coinList: body});
+	var coinlist1 = new CoinList({ _id:'1' ,coinList: body});
 	CoinList.count({}, function(err, count){
 		if(count==0){
 			coinlist1.save(function(err,coinlist) {
@@ -91,6 +92,28 @@ var setCurrencyList  = function() {
 });
 };
 
+
+// Set Global Data
+
+var setGlobalData  = function() {
+	request('https://api.coinmarketcap.com/v2/global/', function (error, response, body) {
+	var globaldata1 = new GlobalData({ _id:'1' ,globalData: body});
+	GlobalData.count({}, function(err, count){
+		if(count==0){
+			globaldata1.save(function(err,globaldata) {
+			console.log('Global data has been saved');
+			});
+		}
+		else if(count==1 && body != null){
+			helper.addGlobalDataToReddis(JSON.stringify(body));
+			GlobalData.update({ _id: '1' }, { $set: { globalData: body }}).exec();
+			console.log('Global Data has been updated');
+
+		}
+	});
+});
+};
+
 var setLanguages= function (languages){	
 	languages.map(function(n){
 	var language = new Language({symbol: n});
@@ -103,11 +126,13 @@ var setLanguages= function (languages){
 // Initialize currency list and coin list
 setCoinList();
 setCurrencyList();
+setGlobalData();
 
 //create languages english urdu and french for the app
 setLanguages(['en','ur','fr']);
 
 setInterval(setCoinList,240000);
 setInterval(setCurrencyList,18000000);
+setInterval(setGlobalData,86400000);
 
 

@@ -186,7 +186,7 @@ router.get('/market/:id',function(req,res) {
                     var graphset = {};
 
                     $('td').each(function(i, elem) {
-                    count = count % 7;
+                    count = count % 9;
                     //every time count reaches 0 create new object
                     if(count==0){
                         graphset = {market:"" ,pair: "" , volume: "" , price:"", volumepercent:""};
@@ -212,7 +212,7 @@ router.get('/market/:id',function(req,res) {
                         graphset.volumepercent= $(this).text();
                     }
 
-                    if (count==6){
+                    if (count==8){
                         graph.push(graphset);
                     }
 
